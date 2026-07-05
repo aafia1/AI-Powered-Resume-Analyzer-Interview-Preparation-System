@@ -1,0 +1,330 @@
+@model ResumeAnalyzer.ViewModels.ResumeAnalysisViewModel
+@{
+    ViewData["Title"] = "Resume Analysis";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var scoreColor = Model.ResumeScore >= 70 ? "#10b981" : Model.ResumeScore >= 40 ? "#f59e0b" : "#ef4444";
+    var atsColor   = Model.AtsScore   >= 70 ? "#10b981" : Model.AtsScore   >= 40 ? "#f59e0b" : "#ef4444";
+}
+
+<div class="page-header">
+    <div class="container-fluid px-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h4 class="fw-700 text-white mb-1"><i class="fas fa-chart-bar me-2"></i>Resume Analysis</h4>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Analysis</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="d-flex gap-2">
+                <a asp-action="GenerateReport" asp-route-id="@Model.ResumeId" class="btn btn-light btn-sm">
+                    <i class="fas fa-file-pdf me-1 text-danger"></i>Download PDF
+                </a>
+                <a asp-action="JobMatch" asp-route-resumeId="@Model.ResumeId" class="btn btn-warning btn-sm text-dark fw-600">
+                    <i class="fas fa-briefcase me-1"></i>Match Job
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid px-4 py-4">
+
+    <!-- ── Score Overview ───────────────────────────────────────── -->
+    <div class="row g-3 mb-4">
+        <!-- Resume Score Ring -->
+        <div class="col-md-4">
+            <div class="card text-center h-100">
+                <div class="card-body py-4">
+                    <div class="score-ring mx-auto mb-3" data-score="@Model.ResumeScore" style="width:130px;height:130px;"></div>
+                    <h6 class="fw-600">Resume Quality Score</h6>
+                    <p class="text-muted small mb-0">
+                        @if (Model.ResumeScore >= 70) { <span class="text-success"><i class="fas fa-check-circle me-1"></i>Excellent resume!</span> }
+                        else if (Model.ResumeScore >= 40) { <span class="text-warning"><i class="fas fa-exclamation-circle me-1"></i>Good, but can improve</span> }
+                        else { <span class="text-danger"><i class="fas fa-times-circle me-1"></i>Needs significant work</span> }
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ATS Score Ring -->
+        <div class="col-md-4">
+            <div class="card text-center h-100">
+                <div class="card-body py-4">
+                    <div class="score-ring mx-auto mb-3" data-score="@Model.AtsScore" style="width:130px;height:130px;"></div>
+                    <h6 class="fw-600">ATS Compatibility</h6>
+                    <p class="text-muted small mb-0">
+                        @if (Model.AtsScore >= 70) { <span class="text-success"><i class="fas fa-robot me-1"></i>ATS-Friendly!</span> }
+                        else if (Model.AtsScore >= 40) { <span class="text-warning"><i class="fas fa-robot me-1"></i>Moderate ATS compatibility</span> }
+                        else { <span class="text-danger"><i class="fas fa-robot me-1"></i>Low ATS compatibility</span> }
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body py-4">
+                    <h6 class="fw-600 mb-3"><i class="fas fa-id-card me-2 text-primary"></i>Extracted Info</h6>
+                    <div class="d-flex flex-column gap-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width:32px;height:32px;border-radius:8px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;">
+                                <i class="fas fa-user text-primary" style="font-size:.8rem;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;">Name</div>
+                                <div class="fw-500 small">@(Model.ParsedName ?? "Not detected")</div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width:32px;height:32px;border-radius:8px;background:rgba(16,185,129,.1);display:flex;align-items:center;justify-content:center;">
+                                <i class="fas fa-envelope text-success" style="font-size:.8rem;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;">Email</div>
+                                <div class="fw-500 small">@(Model.ParsedEmail ?? "Not detected")</div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width:32px;height:32px;border-radius:8px;background:rgba(245,158,11,.1);display:flex;align-items:center;justify-content:center;">
+                                <i class="fas fa-phone text-warning" style="font-size:.8rem;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;">Phone</div>
+                                <div class="fw-500 small">@(Model.ParsedPhone ?? "Not detected")</div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width:32px;height:32px;border-radius:8px;background:rgba(99,102,241,.1);display:flex;align-items:center;justify-content:center;">
+                                <i class="fas fa-calendar text-primary" style="font-size:.8rem;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;">Uploaded</div>
+                                <div class="fw-500 small">@Model.UploadedAt.ToString("MMM dd, yyyy")</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Detected Skills ──────────────────────────────────────── -->
+    <div class="card mb-4">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h6 class="fw-600 mb-0"><i class="fas fa-code me-2 text-primary"></i>Detected Skills</h6>
+                    <small class="text-muted">@Model.DetectedSkills.Count skill(s) found in your resume</small>
+                </div>
+                <a asp-action="InterviewQuestions" asp-route-id="@Model.ResumeId" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-microphone me-1"></i>Interview Prep
+                </a>
+            </div>
+            @if (Model.DetectedSkills.Any())
+            {
+                <div class="d-flex flex-wrap gap-2">
+                    @foreach (var skill in Model.DetectedSkills)
+                    {
+                        <span class="skill-badge"><i class="fas fa-check me-1"></i>@skill</span>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-4 text-muted">
+                    <i class="fas fa-search fa-2x mb-2 opacity-25"></i>
+                    <p class="mb-0">No recognized skills found. Try adding common technology keywords to your resume.</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- ── Score Breakdown Chart ────────────────────────────────── -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <h6 class="fw-600 mb-4"><i class="fas fa-chart-bar me-2 text-primary"></i>Score Breakdown</h6>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="small fw-500">Resume Quality</span>
+                            <span class="small fw-600 text-primary">@Model.ResumeScore%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-primary" data-width="@Model.ResumeScore" style="width:0"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="small fw-500">ATS Compatibility</span>
+                            <span class="small fw-600 text-success">@Model.AtsScore%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" data-width="@Model.AtsScore" style="width:0"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="small fw-500">Skills Coverage</span>
+                            <span class="small fw-600 text-warning">@(Math.Min(Model.DetectedSkills.Count * 4, 100))%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" style="background:var(--warning);width:0" data-width="@(Math.Min(Model.DetectedSkills.Count * 4, 100))"></div>
+                        </div>
+                    </div>
+                    <div class="mb-0">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="small fw-500">Overall Score</span>
+                            <span class="small fw-600 text-info">@((Model.ResumeScore + Model.AtsScore) / 2)%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-info" data-width="@((Model.ResumeScore + Model.AtsScore) / 2)" style="width:0"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <h6 class="fw-600 mb-3"><i class="fas fa-pie-chart me-2 text-primary"></i>Skill Categories</h6>
+                    <canvas id="skillCatChart" height="180"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Improvement Suggestions ─────────────────────────────── -->
+    <div class="card mb-4">
+        <div class="card-body p-4">
+            <h6 class="fw-600 mb-1"><i class="fas fa-lightbulb me-2 text-warning"></i>AI-Powered Improvement Suggestions</h6>
+            <p class="text-muted small mb-4">@Model.Suggestions.Count actionable recommendations to improve your resume</p>
+            <div class="row g-3">
+                @foreach (var s in Model.Suggestions)
+                {
+                    <div class="col-md-6">
+                        <div class="suggestion-card priority-@s.Priority.ToLower()">
+                            <div class="d-flex align-items-start gap-3">
+                                @{
+                                    var bgColor = s.BadgeColor == "danger" ? "danger" : s.BadgeColor == "warning" ? "warning" : "info";
+                                }
+                                <div style="width:40px;height:40px;border-radius:10px;background:var(--@bgColor-subtle);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i class="@s.Icon" style="color:var(--@bgColor)"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                        <span class="fw-600 small">@s.Title</span>
+                                        <span class="badge bg-@s.BadgeColor-subtle text-@s.BadgeColor" style="font-size:.65rem;">@s.Priority</span>
+                                    </div>
+                                    <p class="text-muted mb-0" style="font-size:.82rem;">@s.Description</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Sample Interview Questions ──────────────────────────── -->
+    @if (Model.InterviewQuestions.Any())
+    {
+        <div class="card mb-4">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h6 class="fw-600 mb-0"><i class="fas fa-microphone me-2 text-secondary"></i>Sample Interview Questions</h6>
+                        <small class="text-muted">Based on your detected skills</small>
+                    </div>
+                    <a asp-action="InterviewQuestions" asp-route-id="@Model.ResumeId" class="btn btn-sm btn-outline-secondary">
+                        View All <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                <div class="row g-3">
+                    @foreach (var q in Model.InterviewQuestions.Take(6))
+                    {
+                        <div class="col-md-6">
+                            <div class="iq-card">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <span class="skill-badge" style="font-size:.72rem;">@q.Skill</span>
+                                    <span class="badge bg-@q.LevelColor-subtle text-@q.LevelColor" style="font-size:.7rem;">@q.Level</span>
+                                </div>
+                                <p class="mb-0 small fw-500">@q.Question</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- ── Action Buttons ───────────────────────────────────────── -->
+    <div class="d-flex gap-3 flex-wrap">
+        <a asp-action="JobMatch" asp-route-resumeId="@Model.ResumeId" class="btn btn-primary">
+            <i class="fas fa-briefcase me-2"></i>Match with Job Description
+        </a>
+        <a asp-action="InterviewQuestions" asp-route-id="@Model.ResumeId" class="btn btn-outline-secondary">
+            <i class="fas fa-microphone me-2"></i>Interview Prep
+        </a>
+        <a asp-action="GenerateReport" asp-route-id="@Model.ResumeId" class="btn btn-outline-danger">
+            <i class="fas fa-file-pdf me-2"></i>Download PDF Report
+        </a>
+        <a asp-action="History" class="btn btn-outline-secondary">
+            <i class="fas fa-history me-2"></i>View History
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+// Skill category breakdown — derive categories from detected skills
+const catCounts = {};
+@foreach (var s in Model.DetectedSkills)
+{
+    @:// @s — categorized by keyword
+}
+
+// Simple client-side category mapping
+const catMap = {
+    'C#':'Backend','ASP.NET Core':'Backend','ASP.NET':'Backend','Node.js':'Backend','Python':'Backend','Java':'Backend','PHP':'Backend',
+    'JavaScript':'Frontend','TypeScript':'Frontend','React':'Frontend','Angular':'Frontend','Vue.js':'Frontend','HTML':'Frontend','CSS':'Frontend',
+    'SQL':'Database','MongoDB':'Database','PostgreSQL':'Database','MySQL':'Database','Redis':'Database',
+    'Docker':'DevOps','Kubernetes':'DevOps','Git':'DevOps','CI/CD':'DevOps','Jenkins':'DevOps',
+    'Azure':'Cloud','AWS':'Cloud','GCP':'Cloud',
+    'Machine Learning':'AI/ML','Deep Learning':'AI/ML','TensorFlow':'AI/ML','PyTorch':'AI/ML',
+};
+
+const skills = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DetectedSkills));
+const counts = {};
+skills.forEach(s => {
+    const cat = catMap[s] || 'Other';
+    counts[cat] = (counts[cat] || 0) + 1;
+});
+
+const labels = Object.keys(counts);
+const data   = Object.values(counts);
+
+if (labels.length > 0) {
+    new Chart(document.getElementById('skillCatChart'), {
+        type: 'pie',
+        data: {
+            labels,
+            datasets: [{
+                data,
+                backgroundColor: ['#6366f1','#8b5cf6','#06b6d4','#10b981','#f59e0b','#ef4444','#3b82f6'],
+                borderWidth: 0,
+                hoverOffset: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { position: 'right', labels: { font: { size: 11 }, boxWidth: 12 } } }
+        }
+    });
+}
+</script>
+}

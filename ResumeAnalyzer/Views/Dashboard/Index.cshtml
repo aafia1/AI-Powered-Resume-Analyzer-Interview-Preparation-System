@@ -1,0 +1,308 @@
+@model ResumeAnalyzer.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="container-fluid px-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h4 class="fw-700 text-white mb-1">
+                    👋 Welcome back, @Model.UserName!
+                </h4>
+                <p class="text-white-50 mb-0 small">Here's your resume performance overview</p>
+            </div>
+            <a asp-controller="Resume" asp-action="Upload" class="btn btn-light px-4">
+                <i class="fas fa-plus me-2 text-primary"></i>Upload Resume
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid px-4 py-4">
+
+    <!-- ── Stat Cards ─────────────────────────────────────────────── -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="stat-card stat-primary animate__animated animate__fadeInUp">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-value text-primary" data-counter="@Model.TotalResumes">@Model.TotalResumes</div>
+                        <div class="stat-label">Total Resumes</div>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+                </div>
+                <div class="mt-2">
+                    <a asp-controller="Resume" asp-action="History" class="small text-primary">View all →</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="stat-card stat-success animate__animated animate__fadeInUp" style="animation-delay:.1s">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-value text-success" data-counter="@Model.AvgResumeScore">@Model.AvgResumeScore</div>
+                        <div class="stat-label">Avg Resume Score</div>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-star"></i></div>
+                </div>
+                <div class="progress mt-2" style="height:4px">
+                    <div class="progress-bar bg-success" data-width="@Model.AvgResumeScore" style="width:0"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="stat-card stat-warning animate__animated animate__fadeInUp" style="animation-delay:.2s">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-value text-warning" data-counter="@Model.AvgAtsScore">@Model.AvgAtsScore</div>
+                        <div class="stat-label">ATS Score</div>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-robot"></i></div>
+                </div>
+                <div class="progress mt-2" style="height:4px">
+                    <div class="progress-bar" style="background:var(--warning);width:0" data-width="@Model.AvgAtsScore"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="stat-card stat-info animate__animated animate__fadeInUp" style="animation-delay:.3s">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-value text-info" data-counter="@Model.TotalSkills">@Model.TotalSkills</div>
+                        <div class="stat-label">Unique Skills</div>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-code"></i></div>
+                </div>
+                <div class="mt-2">
+                    <a asp-controller="Resume" asp-action="JobMatch" class="small text-info">Match Job →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Charts Row ─────────────────────────────────────────────── -->
+    <div class="row g-3 mb-4">
+        <!-- Score Trend -->
+        <div class="col-lg-8">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h6 class="fw-600 mb-0">Score Trend</h6>
+                            <small class="text-muted">Resume scores over time</small>
+                        </div>
+                        <span class="skill-badge"><i class="fas fa-chart-line me-1"></i>Analytics</span>
+                    </div>
+                    @if (Model.TotalResumes == 0)
+                    {
+                        <div class="text-center py-5 text-muted">
+                            <i class="fas fa-chart-line fa-3x mb-3 opacity-25"></i>
+                            <p>Upload resumes to see your score trend</p>
+                            <a asp-controller="Resume" asp-action="Upload" class="btn btn-primary btn-sm">Upload Now</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <canvas id="scoreTrendChart" height="100"></canvas>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Skill Categories -->
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="fw-600 mb-1">Skill Categories</h6>
+                    <small class="text-muted d-block mb-3">Distribution of your skills</small>
+                    @if (Model.TopSkills.Any())
+                    {
+                        <canvas id="skillsChart" height="160"></canvas>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4 text-muted">
+                            <i class="fas fa-code fa-2x mb-2 opacity-25"></i>
+                            <p class="small">No skills data yet</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Recent Resumes ─────────────────────────────────────────── -->
+    <div class="row g-3">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-600 mb-0">Recent Resumes</h6>
+                        <a asp-controller="Resume" asp-action="History" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                    @if (!Model.RecentResumes.Any())
+                    {
+                        <div class="text-center py-5">
+                            <div style="width:80px;height:80px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:2rem;color:var(--primary);">
+                                <i class="fas fa-file-upload"></i>
+                            </div>
+                            <h6 class="fw-600">No resumes yet</h6>
+                            <p class="text-muted small">Upload your first resume to get started</p>
+                            <a asp-controller="Resume" asp-action="Upload" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus me-2"></i>Upload Resume
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>File</th>
+                                        <th>Score</th>
+                                        <th>ATS</th>
+                                        <th>Skills</th>
+                                        <th>Date</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var r in Model.RecentResumes)
+                                    {
+                                        var scoreClass = r.Score >= 70 ? "success" : r.Score >= 40 ? "warning" : "danger";
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <div style="width:36px;height:36px;border-radius:8px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;color:var(--primary);">
+                                                        <i class="fas fa-file-alt"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-500 small">@(r.FileName.Length > 25 ? r.FileName[..22] + "..." : r.FileName)</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><span class="badge bg-@scoreClass-subtle text-@scoreClass fw-600">@r.Score/100</span></td>
+                                            <td><span class="badge bg-info-subtle text-info fw-600">@r.AtsScore</span></td>
+                                            <td>
+                                                <div class="d-flex flex-wrap gap-1">
+                                                    @foreach (var s in r.Skills.Take(3))
+                                                    {
+                                                        <span class="skill-badge" style="font-size:.7rem;padding:.2rem .5rem;">@s</span>
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td><small class="text-muted">@r.UploadedAt.ToString("MMM dd")</small></td>
+                                            <td>
+                                                <a asp-controller="Resume" asp-action="Analysis" asp-route-id="@r.Id" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Skills -->
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="fw-600 mb-3">Top Skills Detected</h6>
+                    @if (!Model.TopSkills.Any())
+                    {
+                        <p class="text-muted small text-center py-3">Upload resumes to see skills</p>
+                    }
+                    else
+                    {
+                        @foreach (var s in Model.TopSkills)
+                        {
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div style="width:8px;height:8px;border-radius:50%;background:var(--primary);"></div>
+                                    <span class="small fw-500">@s.SkillName</span>
+                                    <span class="badge bg-secondary-subtle text-secondary" style="font-size:.65rem;">@s.Category</span>
+                                </div>
+                                <span class="badge bg-primary-subtle text-primary fw-600">@s.Count</span>
+                            </div>
+                        }
+                    }
+
+                    <hr>
+                    <div class="d-grid">
+                        <a asp-controller="Resume" asp-action="JobMatch" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-briefcase me-2"></i>Match with Job Description
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+@if (Model.ScoreTrend.Any())
+{
+    @:const labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ScoreTrendLabels));
+    @:const scores = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ScoreTrend));
+    @:
+    @:new Chart(document.getElementById('scoreTrendChart'), {
+    @:    type: 'line',
+    @:    data: {
+    @:        labels,
+    @:        datasets: [{
+    @:            label: 'Resume Score',
+    @:            data: scores,
+    @:            borderColor: '#6366f1',
+    @:            backgroundColor: 'rgba(99,102,241,0.1)',
+    @:            borderWidth: 2.5,
+    @:            pointBackgroundColor: '#6366f1',
+    @:            pointRadius: 5,
+    @:            tension: 0.4,
+    @:            fill: true
+    @:        }]
+    @:    },
+    @:    options: {
+    @:        responsive: true,
+    @:        plugins: { legend: { display: false } },
+    @:        scales: {
+    @:            y: { min: 0, max: 100, grid: { color: 'rgba(0,0,0,0.05)' } },
+    @:            x: { grid: { display: false } }
+    @:        }
+    @:    }
+    @:});
+}
+
+@if (Model.TopSkills.Any())
+{
+    @:const skillLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.TopSkills.Select(s => s.SkillName).ToList()));
+    @:const skillCounts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.TopSkills.Select(s => s.Count).ToList()));
+    @:
+    @:new Chart(document.getElementById('skillsChart'), {
+    @:    type: 'doughnut',
+    @:    data: {
+    @:        labels: skillLabels,
+    @:        datasets: [{
+    @:            data: skillCounts,
+    @:            backgroundColor: ['#6366f1','#8b5cf6','#06b6d4','#10b981','#f59e0b','#ef4444','#3b82f6','#ec4899'],
+    @:            borderWidth: 0,
+    @:            hoverOffset: 6
+    @:        }]
+    @:    },
+    @:    options: {
+    @:        responsive: true,
+    @:        cutout: '65%',
+    @:        plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 12 } } }
+    @:    }
+    @:});
+}
+</script>
+}

@@ -1,0 +1,252 @@
+@model ResumeAnalyzer.ViewModels.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-header">
+    <div class="container-fluid px-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h4 class="fw-700 text-white mb-1"><i class="fas fa-shield-alt me-2"></i>Admin Dashboard</h4>
+                <p class="text-white-50 small mb-0">System overview and management panel</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a asp-action="Users" class="btn btn-light btn-sm"><i class="fas fa-users me-1"></i>Manage Users</a>
+                <a asp-action="Skills" class="btn btn-light btn-sm"><i class="fas fa-code me-1"></i>Skills DB</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid px-4 py-4">
+
+    <!-- ── Stat Cards ─────────────────────────────────────────────── -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="stat-card stat-primary">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-value text-primary" data-counter="@Model.TotalUsers">@Model.TotalUsers</div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                </div>
+                <div class="mt-2"><a asp-action="Users" class="small text-primary">Manage →</a></div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="stat-card stat-success">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-value text-success" data-counter="@Model.TotalResumes">@Model.TotalResumes</div>
+                        <div class="stat-label">Total Resumes</div>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="stat-card stat-warning">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-value text-warning" data-counter="@Model.TotalAnalyses">@Model.TotalAnalyses</div>
+                        <div class="stat-label">Analyses Run</div>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-brain"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="stat-card stat-info">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-value text-info">@Model.AvgResumeScore.ToString("F0")</div>
+                        <div class="stat-label">Avg Resume Score</div>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                </div>
+                <div class="progress mt-2" style="height:4px;">
+                    <div class="progress-bar bg-info" data-width="@Model.AvgResumeScore" style="width:0;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Charts Row ─────────────────────────────────────────────── -->
+    <div class="row g-3 mb-4">
+        <!-- Score Distribution -->
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <h6 class="fw-600 mb-1"><i class="fas fa-chart-bar me-2 text-primary"></i>Score Distribution</h6>
+                    <small class="text-muted d-block mb-3">How resumes are distributed across score ranges</small>
+                    <canvas id="scoreDistChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+        <!-- Top Skills Pie -->
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <h6 class="fw-600 mb-1"><i class="fas fa-pie-chart me-2 text-primary"></i>Most Common Skills</h6>
+                    <small class="text-muted d-block mb-3">Top skills across all uploaded resumes</small>
+                    <canvas id="topSkillsChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Recent Data Tables ─────────────────────────────────────── -->
+    <div class="row g-3">
+        <!-- Recent Users -->
+        <div class="col-lg-5">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-600 mb-0"><i class="fas fa-users me-2 text-primary"></i>Recent Users</h6>
+                        <a asp-action="Users" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Role</th>
+                                    <th>Resumes</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var u in Model.RecentUsers)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="avatar-circle" style="width:32px;height:32px;font-size:.75rem;">
+                                                    @u.FullName.Substring(0, 1).ToUpper()
+                                                </div>
+                                                <div>
+                                                    <div class="fw-500 small">@u.FullName</div>
+                                                    <div class="text-muted" style="font-size:.72rem;">@u.Email.Split('@')[0]</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge @(u.Role == "Admin" ? "bg-warning-subtle text-warning" : "bg-primary-subtle text-primary")" style="font-size:.7rem;">
+                                                @u.Role
+                                            </span>
+                                        </td>
+                                        <td><span class="fw-600 small">@u.ResumeCount</span></td>
+                                        <td>
+                                            <span class="badge @(u.IsActive ? "bg-success-subtle text-success" : "bg-secondary-subtle text-secondary")" style="font-size:.7rem;">
+                                                @(u.IsActive ? "Active" : "Inactive")
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Resumes -->
+        <div class="col-lg-7">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <h6 class="fw-600 mb-3"><i class="fas fa-file-alt me-2 text-primary"></i>Recent Resumes</h6>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>File</th>
+                                    <th>User</th>
+                                    <th>Score</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var r in Model.RecentResumes)
+                                {
+                                    var sc = r.Score >= 70 ? "success" : r.Score >= 40 ? "warning" : "danger";
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <i class="fas fa-file-alt text-primary"></i>
+                                                <span class="small fw-500" title="@r.FileName">
+                                                    @(r.FileName.Length > 22 ? r.FileName[..19] + "..." : r.FileName)
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td><span class="small text-muted">@r.UserName</span></td>
+                                        <td>
+                                            <span class="badge bg-@sc-subtle text-@sc fw-600">@r.Score</span>
+                                        </td>
+                                        <td><small class="text-muted">@r.UploadedAt.ToString("MMM dd, yy")</small></td>
+                                        <td>
+                                            <form asp-action="DeleteResume" asp-route-id="@r.Id" method="post"
+                                                  onsubmit="return confirm('Remove this resume?')">
+                                                <button type="submit" class="btn btn-icon" title="Remove">
+                                                    <i class="fas fa-trash text-danger" style="font-size:.8rem;"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+// Score Distribution Bar Chart
+new Chart(document.getElementById('scoreDistChart'), {
+    type: 'bar',
+    data: {
+        labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ScoreDistribution.Select(s => s.Range).ToList())),
+        datasets: [{
+            label: 'Resumes',
+            data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ScoreDistribution.Select(s => s.Count).ToList())),
+            backgroundColor: ['rgba(239,68,68,0.8)','rgba(245,158,11,0.8)','rgba(59,130,246,0.8)','rgba(99,102,241,0.8)','rgba(16,185,129,0.8)'],
+            borderRadius: 8,
+            borderSkipped: false
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: 'rgba(0,0,0,0.04)' } },
+            x: { grid: { display: false } }
+        }
+    }
+});
+
+// Top Skills Doughnut
+new Chart(document.getElementById('topSkillsChart'), {
+    type: 'doughnut',
+    data: {
+        labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.TopSkills.Select(s => s.SkillName).ToList())),
+        datasets: [{
+            data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.TopSkills.Select(s => s.Count).ToList())),
+            backgroundColor: ['#6366f1','#8b5cf6','#06b6d4','#10b981','#f59e0b','#ef4444','#3b82f6','#ec4899','#14b8a6','#f97316'],
+            borderWidth: 0,
+            hoverOffset: 8
+        }]
+    },
+    options: {
+        responsive: true,
+        cutout: '55%',
+        plugins: { legend: { position: 'right', labels: { font: { size: 11 }, boxWidth: 12 } } }
+    }
+});
+</script>
+}

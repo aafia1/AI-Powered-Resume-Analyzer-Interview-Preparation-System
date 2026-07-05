@@ -1,0 +1,170 @@
+@model List<ResumeAnalyzer.ViewModels.UserManagementViewModel>
+@{
+    ViewData["Title"] = "User Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-header">
+    <div class="container-fluid px-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h4 class="fw-700 text-white mb-1"><i class="fas fa-users me-2"></i>User Management</h4>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a asp-action="Index">Admin Dashboard</a></li>
+                        <li class="breadcrumb-item active">Users</li>
+                    </ol>
+                </nav>
+            </div>
+            <span class="badge bg-white text-primary px-3 py-2 fw-600">@Model.Count Total Users</span>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid px-4 py-4">
+
+    <!-- Quick Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-4">
+            <div class="stat-card stat-primary">
+                <div class="stat-value text-primary">@Model.Count</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="stat-card stat-success">
+                <div class="stat-value text-success">@Model.Count(u => u.IsActive)</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="stat-card stat-warning">
+                <div class="stat-value text-warning">@Model.Count(u => u.Role == "Admin")</div>
+                <div class="stat-label">Admins</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body p-0">
+            <!-- Search/Filter Bar -->
+            <div class="p-4 border-bottom" style="border-color:var(--border)!important;">
+                <div class="row g-2 align-items-center">
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent"><i class="fas fa-search text-muted"></i></span>
+                            <input type="text" id="userSearch" class="form-control" placeholder="Search users by name or email..." />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select id="roleFilter" class="form-select">
+                            <option value="">All Roles</option>
+                            <option value="Admin">Admin</option>
+                            <option value="User">User</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select id="statusFilter" class="form-select">
+                            <option value="">All Status</option>
+                            <option value="true">Active</option>
+                            <option value="false">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table mb-0" id="usersTable">
+                    <thead>
+                        <tr>
+                            <th style="padding-left:1.5rem;">#</th>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Resumes</th>
+                            <th>Joined</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int i = 1; }
+                        @foreach (var u in Model)
+                        {
+                            <tr data-name="@u.FullName.ToLower()" data-email="@u.Email.ToLower()" data-role="@u.Role" data-active="@u.IsActive.ToString().ToLower()">
+                                <td style="padding-left:1.5rem;color:var(--text-muted);font-size:.85rem;">@i++</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.9rem;flex-shrink:0;">
+                                            @u.FullName.Substring(0, 1).ToUpper()
+                                        </div>
+                                        <div>
+                                            <div class="fw-600 small">@u.FullName</div>
+                                            <div class="text-muted" style="font-size:.72rem;">ID: @u.Id.Substring(0, 8)...</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="small text-muted">@u.Email</span></td>
+                                <td>
+                                    <span class="badge @(u.Role == "Admin" ? "bg-warning-subtle text-warning" : "bg-primary-subtle text-primary")">
+                                        @(u.Role == "Admin" ? "🛡️ Admin" : "👤 User")
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary-subtle text-secondary fw-600 px-3">@u.ResumeCount</span>
+                                </td>
+                                <td><small class="text-muted">@u.CreatedAt.ToString("MMM dd, yyyy")</small></td>
+                                <td>
+                                    @if (u.IsActive)
+                                    {
+                                        <span class="badge bg-success-subtle text-success">
+                                            <i class="fas fa-circle me-1" style="font-size:.5rem;"></i>Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary-subtle text-secondary">
+                                            <i class="fas fa-circle me-1" style="font-size:.5rem;"></i>Inactive
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <form asp-action="ToggleUserActive" asp-route-id="@u.Id" method="post">
+                                            <button type="submit" class="btn btn-sm @(u.IsActive ? "btn-outline-warning" : "btn-outline-success")" title="@(u.IsActive ? "Deactivate" : "Activate")">
+                                                <i class="fas fa-@(u.IsActive ? "ban" : "check")"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function filterTable() {
+    const search = document.getElementById('userSearch').value.toLowerCase();
+    const role   = document.getElementById('roleFilter').value;
+    const status = document.getElementById('statusFilter').value;
+    document.querySelectorAll('#usersTable tbody tr').forEach(row => {
+        const name   = row.dataset.name || '';
+        const email  = row.dataset.email || '';
+        const rRole  = row.dataset.role || '';
+        const active = row.dataset.active || '';
+        const matchSearch = !search || name.includes(search) || email.includes(search);
+        const matchRole   = !role   || rRole === role;
+        const matchStatus = !status || active === status;
+        row.style.display = (matchSearch && matchRole && matchStatus) ? '' : 'none';
+    });
+}
+document.getElementById('userSearch').addEventListener('input', filterTable);
+document.getElementById('roleFilter').addEventListener('change', filterTable);
+document.getElementById('statusFilter').addEventListener('change', filterTable);
+</script>
+}

@@ -1,0 +1,152 @@
+@{
+    ViewData["Title"] = "User Guide";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-header">
+    <div class="container-fluid px-4">
+        <h4 class="fw-700 text-white mb-1"><i class="fas fa-graduation-cap me-2"></i>User Guide</h4>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item"><a asp-controller="Help" asp-action="Index">Help</a></li>
+                <li class="breadcrumb-item active">User Guide</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="container-fluid px-4 py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Step 1 -->
+            <div class="guide-section card mb-4 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex gap-3">
+                        <div class="guide-step">1</div>
+                        <div class="flex-grow-1">
+                            <h5 class="fw-600 mb-2"><i class="fas fa-user-circle me-2 text-primary"></i>Create an Account</h5>
+                            <p class="text-muted mb-0">Start by signing up with your email address. Create a secure password and verify your account. Once verified, you'll have full access to all ResumeAI features.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="guide-section card mb-4 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex gap-3">
+                        <div class="guide-step">2</div>
+                        <div class="flex-grow-1">
+                            <h5 class="fw-600 mb-2"><i class="fas fa-file-upload me-2 text-info"></i>Upload Your Resume</h5>
+                            <p class="text-muted mb-2">Navigate to the "Upload Resume" section. You can:</p>
+                            <ul class="text-muted small mb-0">
+                                <li>Drag and drop your resume file</li>
+                                <li>Click to browse and select a file</li>
+                                <li>Upload PDF or DOCX files (max 10MB)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="guide-section card mb-4 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex gap-3">
+                        <div class="guide-step">3</div>
+                        <div class="flex-grow-1">
+                            <h5 class="fw-600 mb-2"><i class="fas fa-search me-2 text-success"></i>Analyze Your Resume</h5>
+                            <p class="text-muted mb-2">After uploading, the AI will automatically:</p>
+                            <ul class="text-muted small mb-0">
+                                <li>Parse and extract resume content</li>
+                                <li>Identify skills and experience</li>
+                                <li>Generate actionable improvement suggestions</li>
+                                <li>Calculate overall resume strength score</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="guide-section card mb-4 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex gap-3">
+                        <div class="guide-step">4</div>
+                        <div class="flex-grow-1">
+                            <h5 class="fw-600 mb-2"><i class="fas fa-briefcase me-2 text-warning"></i>Match with Job Descriptions</h5>
+                            <p class="text-muted mb-2">Use the Job Match feature to:</p>
+                            <ul class="text-muted small mb-0">
+                                <li>Paste a job description</li>
+                                <li>Get compatibility score (0-100%)</li>
+                                <li>See matched and missing skills</li>
+                                <li>Receive targeted improvement recommendations</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="guide-section card mb-4 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex gap-3">
+                        <div class="guide-step">5</div>
+                        <div class="flex-grow-1">
+                            <h5 class="fw-600 mb-2"><i class="fas fa-microphone me-2 text-danger"></i>Prepare for Interviews</h5>
+                            <p class="text-muted mb-2">Access AI-generated interview questions:</p>
+                            <ul class="text-muted small mb-0">
+                                <li>Questions based on your skills</li>
+                                <li>Multiple difficulty levels</li>
+                                <li>Practice and improve answers</li>
+                                <li>Track your progress</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 6 -->
+            <div class="guide-section card mb-5 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex gap-3">
+                        <div class="guide-step">6</div>
+                        <div class="flex-grow-1">
+                            <h5 class="fw-600 mb-2"><i class="fas fa-file-pdf me-2 text-secondary"></i>Download Report</h5>
+                            <p class="text-muted mb-0">Generate and download comprehensive PDF reports with your analysis results, recommendations, and insights. Share these reports with mentors or career coaches.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm bg-light">
+                <div class="card-body p-4">
+                    <h6 class="fw-600 mb-2"><i class="fas fa-star me-2 text-warning"></i>Pro Tips</h6>
+                    <ul class="text-muted small mb-0">
+                        <li><strong>Update Regularly:</strong> Upload updated versions of your resume to track improvements</li>
+                        <li><strong>Try Multiple Jobs:</strong> Use job match feature with different job descriptions to identify skill gaps</li>
+                        <li><strong>Review Suggestions:</strong> Read all AI suggestions carefully and implement relevant improvements</li>
+                        <li><strong>Practice Questions:</strong> Use interview questions daily to improve your interview skills</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .guide-step {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+</style>

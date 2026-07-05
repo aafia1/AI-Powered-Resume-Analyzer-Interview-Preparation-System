@@ -1,0 +1,91 @@
+@model ResumeAnalyzer.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="min-vh-100 d-flex align-items-center" style="background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 100%);padding:2rem 0;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="text-center mb-4">
+                    <div class="brand-icon mx-auto mb-3" style="width:52px;height:52px;font-size:1.3rem;">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h2 class="fw-700 text-white">Create Account</h2>
+                    <p class="text-muted">Start analyzing your resume for free</p>
+                </div>
+
+                <div class="card border-0 shadow-lg" style="border-radius:20px;">
+                    <div class="card-body p-4">
+
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="alert alert-danger alert-dismissible">
+                                @foreach (var e in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                {
+                                    <div><i class="fas fa-exclamation-circle me-1"></i>@e.ErrorMessage</div>
+                                }
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        }
+
+                        <form asp-action="Register" method="post">
+                            <div class="mb-3">
+                                <label class="form-label">Full Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-transparent"><i class="fas fa-user text-muted"></i></span>
+                                    <input asp-for="FullName" class="form-control" placeholder="John Doe" />
+                                </div>
+                                <span asp-validation-for="FullName" class="text-danger small"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-transparent"><i class="fas fa-envelope text-muted"></i></span>
+                                    <input asp-for="Email" class="form-control" placeholder="you@example.com" />
+                                </div>
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-transparent"><i class="fas fa-lock text-muted"></i></span>
+                                    <input asp-for="Password" class="form-control" placeholder="Min. 6 characters" />
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePwd(this)"><i class="fas fa-eye"></i></button>
+                                </div>
+                                <span asp-validation-for="Password" class="text-danger small"></span>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Confirm Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-transparent"><i class="fas fa-lock text-muted"></i></span>
+                                    <input asp-for="ConfirmPassword" class="form-control" placeholder="Repeat password" />
+                                </div>
+                                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 py-2">
+                                <i class="fas fa-user-plus me-2"></i>Create Account
+                            </button>
+                        </form>
+
+                        <p class="text-center text-muted small mt-3 mb-0">
+                            Already have an account? <a asp-action="Login" class="text-primary fw-600">Sign in</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function togglePwd(btn) {
+    const input = btn.previousElementSibling;
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') { input.type = 'text'; icon.className = 'fas fa-eye-slash'; }
+    else { input.type = 'password'; icon.className = 'fas fa-eye'; }
+}
+</script>
+}

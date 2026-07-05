@@ -1,0 +1,202 @@
+@model List<ResumeAnalyzer.ViewModels.InterviewQuestionViewModel>
+@{
+    ViewData["Title"] = "Interview Questions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var skills = (List<string>)(ViewBag.Skills ?? new List<string>());
+    var beginnerQs   = Model.Where(q => q.Level == "Beginner").ToList();
+    var intermediateQs = Model.Where(q => q.Level == "Intermediate").ToList();
+    var advancedQs   = Model.Where(q => q.Level == "Advanced").ToList();
+}
+
+<div class="page-header">
+    <div class="container-fluid px-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h4 class="fw-700 text-white mb-1"><i class="fas fa-microphone me-2"></i>Interview Preparation</h4>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a asp-action="Analysis" asp-route-id="@ViewBag.ResumeId">Analysis</a></li>
+                        <li class="breadcrumb-item active">Interview Questions</li>
+                    </ol>
+                </nav>
+            </div>
+            <a asp-action="Analysis" asp-route-id="@ViewBag.ResumeId" class="btn btn-light btn-sm">
+                <i class="fas fa-arrow-left me-1"></i>Back to Analysis
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid px-4 py-4">
+
+    <!-- Intro Banner -->
+    <div class="card mb-4" style="background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(139,92,246,.06));border:none;">
+        <div class="card-body p-4">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5 class="fw-700 mb-1">🎤 Practice Makes Perfect</h5>
+                    <p class="text-muted mb-3">These questions are generated based on <strong>@skills.Count skill(s)</strong> detected in your resume: <em>@string.Join(", ", skills.Take(6))@(skills.Count > 6 ? "..." : "")</em></p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <span class="badge bg-success-subtle text-success px-3 py-2"><i class="fas fa-circle me-1" style="font-size:.5rem;"></i>Beginner — @beginnerQs.Count Q's</span>
+                        <span class="badge bg-warning-subtle text-warning px-3 py-2"><i class="fas fa-circle me-1" style="font-size:.5rem;"></i>Intermediate — @intermediateQs.Count Q's</span>
+                        <span class="badge bg-danger-subtle text-danger px-3 py-2"><i class="fas fa-circle me-1" style="font-size:.5rem;"></i>Advanced — @advancedQs.Count Q's</span>
+                    </div>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <div style="font-size:3rem;line-height:1;">🏆</div>
+                    <div class="fw-600 mt-1">@Model.Count Total Questions</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-question-circle fa-3x text-muted mb-3 opacity-50"></i>
+                <h6 class="fw-600">No interview questions found</h6>
+                <p class="text-muted">No recognizable skills were detected in your resume. Add more technical keywords to generate questions.</p>
+                <a asp-controller="Resume" asp-action="Upload" class="btn btn-primary btn-sm">Upload Better Resume</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Filter Tabs -->
+        <ul class="nav nav-pills mb-4" id="levelTabs">
+            <li class="nav-item">
+                <button class="nav-link active" data-filter="all" onclick="filterQuestions('all', this)">
+                    All <span class="badge bg-primary ms-1">@Model.Count</span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-filter="Beginner" onclick="filterQuestions('Beginner', this)">
+                    <i class="fas fa-seedling me-1"></i>Beginner <span class="badge bg-success ms-1">@beginnerQs.Count</span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-filter="Intermediate" onclick="filterQuestions('Intermediate', this)">
+                    <i class="fas fa-fire me-1"></i>Intermediate <span class="badge bg-warning ms-1">@intermediateQs.Count</span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-filter="Advanced" onclick="filterQuestions('Advanced', this)">
+                    <i class="fas fa-rocket me-1"></i>Advanced <span class="badge bg-danger ms-1">@advancedQs.Count</span>
+                </button>
+            </li>
+        </ul>
+
+        <!-- Questions Grid -->
+        <div class="row g-3" id="questionsGrid">
+            @foreach (var q in Model)
+            {
+                <div class="col-md-6 col-xl-4 q-item" data-level="@q.Level">
+                    <div class="iq-card h-100 animate__animated animate__fadeInUp">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="skill-badge" style="font-size:.75rem;">
+                                <i class="fas fa-tag me-1"></i>@q.Skill
+                            </span>
+                            <span class="badge bg-@q.LevelColor-subtle text-@q.LevelColor">@q.Level</span>
+                        </div>
+                        <p class="fw-500 mb-3" style="font-size:.92rem;line-height:1.5;">@q.Question</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-secondary-subtle text-secondary" style="font-size:.72rem;">@q.Category</span>
+                            <button class="btn btn-icon" title="Practice this question" data-bs-toggle="collapse" data-bs-target="#answer-@Model.IndexOf(q)">
+                                <i class="fas fa-chevron-down text-muted" style="font-size:.8rem;"></i>
+                            </button>
+                        </div>
+                        <div class="collapse mt-3" id="answer-@Model.IndexOf(q)">
+                            <div class="p-3 rounded-xl" style="background:var(--primary-light);border:1px solid rgba(99,102,241,.15);">
+                                <p class="small text-muted mb-0">
+                                    <i class="fas fa-lightbulb text-warning me-1"></i>
+                                    <strong>Tip:</strong> Think about your real-world experience with @q.Skill before answering. Use the STAR method (Situation, Task, Action, Result) for behavioral questions.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Skill breakdown chart -->
+        <div class="row g-3 mt-2">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <h6 class="fw-600 mb-3"><i class="fas fa-chart-bar me-2 text-primary"></i>Questions by Skill</h6>
+                        <canvas id="skillQChart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <h6 class="fw-600 mb-3"><i class="fas fa-chart-pie me-2 text-primary"></i>Questions by Level</h6>
+                        <canvas id="levelChart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+<script>
+function filterQuestions(level, btn) {
+    document.querySelectorAll('#levelTabs .nav-link').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.q-item').forEach(item => {
+        item.style.display = (level === 'all' || item.dataset.level === level) ? '' : 'none';
+    });
+}
+
+// Skill question distribution
+const skillCounts = {};
+@foreach (var q in Model)
+{
+    @:skillCounts['@q.Skill'] = (skillCounts['@q.Skill'] || 0) + 1;
+}
+
+new Chart(document.getElementById('skillQChart'), {
+    type: 'bar',
+    data: {
+        labels: Object.keys(skillCounts),
+        datasets: [{
+            label: 'Questions',
+            data: Object.values(skillCounts),
+            backgroundColor: 'rgba(99,102,241,0.8)',
+            borderRadius: 6,
+            borderSkipped: false
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: 'rgba(0,0,0,0.04)' } },
+            x: { grid: { display: false }, ticks: { font: { size: 11 } } }
+        }
+    }
+});
+
+new Chart(document.getElementById('levelChart'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Beginner', 'Intermediate', 'Advanced'],
+        datasets: [{
+            data: [@beginnerQs.Count, @intermediateQs.Count, @advancedQs.Count],
+            backgroundColor: ['rgba(16,185,129,0.8)', 'rgba(245,158,11,0.8)', 'rgba(239,68,68,0.8)'],
+            borderWidth: 0,
+            hoverOffset: 8
+        }]
+    },
+    options: {
+        responsive: true,
+        cutout: '60%',
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 12 }, boxWidth: 12 } } }
+    }
+});
+</script>
+}

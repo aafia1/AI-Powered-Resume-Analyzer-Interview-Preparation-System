@@ -1,0 +1,129 @@
+@model List<ResumeAnalyzer.Models.Skill>
+@{
+    ViewData["Title"] = "Skills Database";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var categories = Model.GroupBy(s => s.Category).OrderBy(g => g.Key).ToList();
+    var catColors = new Dictionary<string,string>{
+        {"Backend","primary"},{"Frontend","success"},{"Database","warning"},{"DevOps","info"},
+        {"Cloud","secondary"},{"AI","danger"},{"Methodology","dark"},{"Architecture","secondary"},
+        {"Data","success"},{"Other","secondary"}
+    };
+}
+
+<div class="page-header">
+    <div class="container-fluid px-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h4 class="fw-700 text-white mb-1"><i class="fas fa-code me-2"></i>Skills Database</h4>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a asp-action="Index">Admin Dashboard</a></li>
+                        <li class="breadcrumb-item active">Skills</li>
+                    </ol>
+                </nav>
+            </div>
+            <span class="badge bg-white text-primary px-3 py-2 fw-600">@Model.Count Total Skills</span>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid px-4 py-4">
+
+    <!-- Category Stats -->
+    <div class="row g-3 mb-4">
+        @foreach (var cat in categories)
+        {
+            var color = catColors.GetValueOrDefault(cat.Key, "secondary");
+            <div class="col-6 col-md-3 col-lg-2">
+                <div class="card text-center p-3">
+                    <div class="fw-700" style="font-size:1.5rem;color:var(--@color == "dark" ? "text" : color);">@cat.Count()</div>
+                    <div class="small text-muted">@cat.Key</div>
+                    <div class="progress mt-2" style="height:3px;">
+                        <div class="progress-bar bg-@color" style="width:@(cat.Count() * 100 / Math.Max(Model.Count,1))%"></div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Search -->
+    <div class="card mb-4">
+        <div class="card-body p-3">
+            <div class="input-group">
+                <span class="input-group-text bg-transparent"><i class="fas fa-search text-muted"></i></span>
+                <input type="text" id="skillSearch" class="form-control" placeholder="Search skills..." />
+            </div>
+        </div>
+    </div>
+
+    <!-- Skills by Category -->
+    @foreach (var cat in categories)
+    {
+        var color = catColors.GetValueOrDefault(cat.Key, "secondary");
+        <div class="card mb-3 skill-category-block" data-category="@cat.Key">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="badge bg-@color px-3 py-2 fw-600" style="font-size:.85rem;">@cat.Key</span>
+                    <span class="text-muted small">@cat.Count() skills</span>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    @foreach (var s in cat.OrderBy(x => x.Name))
+                    {
+                        var usageCount = s.ResumeSkills.Count;
+                        <div class="skill-item d-inline-flex align-items-center gap-2 px-3 py-2 rounded-xl"
+                             style="background:var(--bg);border:1px solid var(--border);transition:all .2s;"
+                             data-name="@s.Name.ToLower()">
+                            <span class="fw-500 small">@s.Name</span>
+                            @if (usageCount > 0)
+                            {
+                                <span class="badge bg-@color-subtle text-@color" style="font-size:.65rem;">@usageCount uses</span>
+                            }
+                            <span class="badge bg-secondary-subtle text-secondary" style="font-size:.65rem;">@s.Proficiency</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Chart -->
+    <div class="card">
+        <div class="card-body p-4">
+            <h6 class="fw-600 mb-3"><i class="fas fa-chart-bar me-2 text-primary"></i>Skills by Category</h6>
+            <canvas id="catChart" height="80"></canvas>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+document.getElementById('skillSearch').addEventListener('input', function () {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll('.skill-item').forEach(item => {
+        item.style.display = (!q || item.dataset.name.includes(q)) ? '' : 'none';
+    });
+});
+
+new Chart(document.getElementById('catChart'), {
+    type: 'bar',
+    data: {
+        labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(categories.Select(c => c.Key).ToList())),
+        datasets: [{
+            label: 'Number of Skills',
+            data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(categories.Select(c => c.Count()).ToList())),
+            backgroundColor: ['#6366f1','#10b981','#f59e0b','#06b6d4','#8b5cf6','#ef4444','#1e293b','#8b5cf6','#10b981','#94a3b8'],
+            borderRadius: 8,
+            borderSkipped: false
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: 'rgba(0,0,0,0.04)' } },
+            x: { grid: { display: false } }
+        }
+    }
+});
+</script>
+}

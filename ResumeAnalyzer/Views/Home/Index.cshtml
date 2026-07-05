@@ -1,0 +1,172 @@
+@{
+    ViewData["Title"] = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- ── Hero ─────────────────────────────────────────────────────────────── -->
+<section class="hero-section">
+    <div class="container py-5">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <div class="hero-badge animate__animated animate__fadeInDown">
+                    <i class="fas fa-sparkles text-warning"></i> AI-Powered Resume Analysis
+                </div>
+                <h1 class="hero-title animate__animated animate__fadeInUp">
+                    Land Your<br>
+                    <span class="text-gradient">Dream Job</span><br>
+                    Faster
+                </h1>
+                <p class="hero-subtitle animate__animated animate__fadeInUp" style="animation-delay:.1s">
+                    Upload your resume and get instant AI-powered analysis, ATS compatibility scores,
+                    job matching, and personalized interview preparation.
+                </p>
+                <div class="d-flex gap-3 flex-wrap animate__animated animate__fadeInUp" style="animation-delay:.2s">
+                    <a asp-controller="Account" asp-action="Register" class="btn btn-gradient btn-lg">
+                        <i class="fas fa-rocket me-2"></i>Get Started Free
+                    </a>
+                    <a href="#features" class="btn btn-lg" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);">
+                        <i class="fas fa-play-circle me-2"></i>See How It Works
+                    </a>
+                </div>
+                <div class="hero-stats animate__animated animate__fadeInUp" style="animation-delay:.3s">
+                    <div class="hero-stat">
+                        <div class="val">10K+</div>
+                        <div class="lbl">Resumes Analyzed</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="val">95%</div>
+                        <div class="lbl">ATS Pass Rate</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="val">500+</div>
+                        <div class="lbl">Skills Detected</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 animate__animated animate__fadeInRight" style="animation-delay:.2s">
+                <div class="hero-card">
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">📄</div>
+                        <div>
+                            <div class="fw-600">John_Doe_Resume.pdf</div>
+                            <div style="font-size:.8rem;opacity:.7">Just analyzed · 2.4 KB</div>
+                        </div>
+                        <div class="ms-auto">
+                            <span style="background:rgba(16,185,129,.2);color:#6ee7b7;padding:.3rem .7rem;border-radius:50px;font-size:.8rem;font-weight:600;">✓ Done</span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-4">
+                            <div style="background:rgba(255,255,255,.1);border-radius:12px;padding:1rem;text-align:center;">
+                                <div style="font-size:1.5rem;font-weight:700;color:#6ee7b7">87</div>
+                                <div style="font-size:.7rem;opacity:.7">Resume Score</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div style="background:rgba(255,255,255,.1);border-radius:12px;padding:1rem;text-align:center;">
+                                <div style="font-size:1.5rem;font-weight:700;color:#fcd34d">79</div>
+                                <div style="font-size:.7rem;opacity:.7">ATS Score</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div style="background:rgba(255,255,255,.1);border-radius:12px;padding:1rem;text-align:center;">
+                                <div style="font-size:1.5rem;font-weight:700;color:#93c5fd">12</div>
+                                <div style="font-size:.7rem;opacity:.7">Skills Found</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="font-size:.8rem;opacity:.7;margin-bottom:.5rem">Detected Skills</div>
+                    <div class="d-flex flex-wrap gap-1">
+                        @foreach (var s in new[] { "C#", "ASP.NET", "SQL", "JavaScript", "React", "Azure", "Docker" })
+                        {
+                            <span style="background:rgba(99,102,241,.3);color:#c7d2fe;padding:.25rem .6rem;border-radius:50px;font-size:.75rem;">@s</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Features ──────────────────────────────────────────────────────────── -->
+<section id="features" class="py-6" style="padding:5rem 0;background:var(--bg);">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="skill-badge mb-3" style="font-size:.9rem;">✨ Platform Features</span>
+            <h2 class="section-title" style="font-size:2.5rem;">Everything You Need to<br><span class="text-gradient">Get Hired Faster</span></h2>
+            <p class="section-subtitle" style="max-width:600px;margin:0 auto;">Our AI analyzes every aspect of your resume and gives you actionable insights.</p>
+        </div>
+        <div class="row g-4">
+            @{
+                var features = new[]
+                {
+                    ("fas fa-brain", "AI Resume Analysis", "Get deep insights into your resume quality, structure, and content with our intelligent parsing engine.", "var(--primary)"),
+                    ("fas fa-robot", "ATS Compatibility", "Ensure your resume passes Applicant Tracking Systems with our ATS score and optimization tips.", "var(--success)"),
+                    ("fas fa-briefcase", "Job Matching", "Paste any job description and instantly see how well your resume matches the requirements.", "var(--warning)"),
+                    ("fas fa-microphone", "Interview Prep", "Get personalized interview questions based on your skills and experience level.", "var(--secondary)"),
+                    ("fas fa-chart-pie", "Skills Analytics", "Visualize your skill gaps and discover which skills to add to boost your profile.", "var(--info)"),
+                    ("fas fa-file-pdf", "PDF Reports", "Download professional analysis reports to share with mentors or track your progress.", "var(--danger)")
+                };
+            }
+            @foreach (var (icon, title, desc, color) in features)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card animate__animated animate__fadeInUp">
+                        <div class="feature-icon" style="background:@(color)20;color:@color;">
+                            <i class="@icon"></i>
+                        </div>
+                        <h5 class="fw-600 mb-2">@title</h5>
+                        <p class="text-muted mb-0" style="font-size:.9rem;">@desc</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- ── How It Works ───────────────────────────────────────────────────────── -->
+<section style="padding:5rem 0;background:var(--bg-card);">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title" style="font-size:2.5rem;">How It <span class="text-gradient">Works</span></h2>
+            <p class="section-subtitle">Three simple steps to a better resume</p>
+        </div>
+        <div class="row g-4 justify-content-center">
+            @{
+                var steps = new[] {
+                    ("1", "fas fa-upload", "Upload Resume", "Drag & drop your PDF or DOCX resume. We support all standard formats."),
+                    ("2", "fas fa-cogs", "AI Analysis", "Our engine extracts skills, scores your resume, and identifies improvements."),
+                    ("3", "fas fa-trophy", "Get Results", "Receive your score, matched skills, suggestions, and interview questions.")
+                };
+            }
+            @foreach (var (num, icon, title, desc) in steps)
+            {
+                <div class="col-md-4">
+                    <div class="text-center p-4">
+                        <div style="position:relative;display:inline-block;margin-bottom:1.5rem;">
+                            <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:1.5rem;color:#fff;">
+                                <i class="@icon"></i>
+                            </div>
+                            <span style="position:absolute;top:-5px;right:-5px;width:28px;height:28px;background:var(--warning);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff;">@num</span>
+                        </div>
+                        <h5 class="fw-600 mb-2">@title</h5>
+                        <p class="text-muted mb-0" style="font-size:.9rem;">@desc</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- ── CTA ───────────────────────────────────────────────────────────────── -->
+<section style="padding:5rem 0;background:linear-gradient(135deg,var(--primary),var(--secondary));">
+    <div class="container text-center">
+        <h2 style="font-size:2.5rem;font-weight:700;color:#fff;margin-bottom:1rem;">Ready to Boost Your Resume?</h2>
+        <p style="color:rgba(255,255,255,.8);font-size:1.1rem;margin-bottom:2rem;">Join thousands of job seekers getting hired faster with ResumeAI.</p>
+        <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg px-5" style="font-weight:600;">
+            <i class="fas fa-rocket me-2 text-primary"></i>Start For Free
+        </a>
+    </div>
+</section>

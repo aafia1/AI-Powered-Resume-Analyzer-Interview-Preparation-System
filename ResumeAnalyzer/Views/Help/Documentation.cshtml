@@ -1,0 +1,206 @@
+@{
+    ViewData["Title"] = "Documentation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-header">
+    <div class="container-fluid px-4">
+        <h4 class="fw-700 text-white mb-1"><i class="fas fa-book me-2"></i>Documentation</h4>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item"><a asp-controller="Help" asp-action="Index">Help</a></li>
+                <li class="breadcrumb-item active">Documentation</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="container-fluid px-4 py-5">
+    <div class="row">
+        <div class="col-lg-9">
+            <!-- Overview Section -->
+            <div class="doc-section card mb-4 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="fw-600 mb-3"><i class="fas fa-info-circle me-2 text-primary"></i>Overview</h5>
+                    <p class="text-muted mb-0">
+                        ResumeAI is built with modern technologies including ASP.NET Core 8, Entity Framework Core, and SQL Server. 
+                        The application uses AI algorithms to analyze resumes and provide actionable insights for career development.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Features Section -->
+            <div class="doc-section card mb-4 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="fw-600 mb-3"><i class="fas fa-star me-2 text-warning"></i>Key Features</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <h6 class="fw-600 mb-2">Resume Analysis</h6>
+                            <p class="text-muted small mb-0">Automatic parsing and analysis of resume content with AI-powered insights</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-600 mb-2">Job Matching</h6>
+                            <p class="text-muted small mb-0">Compare your skills against job requirements with detailed compatibility scores</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-600 mb-2">Interview Prep</h6>
+                            <p class="text-muted small mb-0">AI-generated interview questions tailored to your skill set</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-600 mb-2">PDF Reports</h6>
+                            <p class="text-muted small mb-0">Generate comprehensive reports for download and sharing</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tech Stack Section -->
+            <div class="doc-section card mb-4 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="fw-600 mb-3"><i class="fas fa-code me-2 text-info"></i>Technology Stack</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <h6 class="fw-600 mb-2">Backend</h6>
+                            <ul class="text-muted small mb-0">
+                                <li>ASP.NET Core 8.0</li>
+                                <li>C# Programming Language</li>
+                                <li>Entity Framework Core 8.0</li>
+                                <li>SQL Server Database</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-600 mb-2">Frontend</h6>
+                            <ul class="text-muted small mb-0">
+                                <li>Bootstrap 5.3</li>
+                                <li>Font Awesome Icons</li>
+                                <li>Chart.js</li>
+                                <li>Razor Views</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-600 mb-2">Libraries</h6>
+                            <ul class="text-muted small mb-0">
+                                <li>iText7 (PDF Generation)</li>
+                                <li>DocumentFormat.OpenXml</li>
+                                <li>PdfPig (PDF Parsing)</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-600 mb-2">Security</h6>
+                            <ul class="text-muted small mb-0">
+                                <li>ASP.NET Identity</li>
+                                <li>HTTPS/TLS Encryption</li>
+                                <li>Data Validation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Documentation Section -->
+            <div class="doc-section card mb-4 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="fw-600 mb-3"><i class="fas fa-plug me-2 text-success"></i>Main Controllers</h5>
+                    <div class="accordion" id="docAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#doc1">
+                                    ResumeController
+                                </button>
+                            </h2>
+                            <div id="doc1" class="accordion-collapse collapse show" data-bs-parent="#docAccordion">
+                                <div class="accordion-body">
+                                    <p class="text-muted small mb-2"><strong>Endpoints:</strong></p>
+                                    <ul class="text-muted small mb-0">
+                                        <li><code>POST /Resume/Upload</code> - Upload resume file</li>
+                                        <li><code>GET /Resume/History</code> - View upload history</li>
+                                        <li><code>GET /Resume/Analysis/{id}</code> - Get analysis results</li>
+                                        <li><code>GET /Resume/JobMatch</code> - Job matching interface</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#doc2">
+                                    AccountController
+                                </button>
+                            </h2>
+                            <div id="doc2" class="accordion-collapse collapse" data-bs-parent="#docAccordion">
+                                <div class="accordion-body">
+                                    <p class="text-muted small mb-2"><strong>Endpoints:</strong></p>
+                                    <ul class="text-muted small mb-0">
+                                        <li><code>GET/POST /Account/Register</code> - User registration</li>
+                                        <li><code>GET/POST /Account/Login</code> - User login</li>
+                                        <li><code>POST /Account/Logout</code> - User logout</li>
+                                        <li><code>GET/POST /Account/ChangePassword</code> - Change password</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#doc3">
+                                    DashboardController
+                                </button>
+                            </h2>
+                            <div id="doc3" class="accordion-collapse collapse" data-bs-parent="#docAccordion">
+                                <div class="accordion-body">
+                                    <p class="text-muted small mb-2"><strong>Endpoints:</strong></p>
+                                    <ul class="text-muted small mb-0">
+                                        <li><code>GET /Dashboard</code> - User dashboard overview</li>
+                                        <li><code>GET /Dashboard/Statistics</code> - User statistics</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Models Section -->
+            <div class="doc-section card mb-5 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="fw-600 mb-3"><i class="fas fa-database me-2 text-secondary"></i>Database Models</h5>
+                    <p class="text-muted small mb-3">Key entities in the ResumeAI system:</p>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <h6 class="fw-600 mb-2">Resume</h6>
+                            <p class="text-muted small mb-0">Stores uploaded resume files with metadata and parsed content</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-600 mb-2">ApplicationUser</h6>
+                            <p class="text-muted small mb-0">Extended identity user with profile information</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-600 mb-2">Skill</h6>
+                            <p class="text-muted small mb-0">Predefined skills catalog with proficiency levels</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-600 mb-2">AnalysisResult</h6>
+                            <p class="text-muted small mb-0">Analysis results with recommendations</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <div class="col-lg-3">
+            <div class="card border-0 shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-body p-0">
+                    <div class="nav flex-column nav-pills">
+                        <a href="#overview" class="nav-link text-start small">Overview</a>
+                        <a href="#features" class="nav-link text-start small">Key Features</a>
+                        <a href="#techstack" class="nav-link text-start small">Technology Stack</a>
+                        <a href="#api" class="nav-link text-start small">API Reference</a>
+                        <a href="#database" class="nav-link text-start small">Database Models</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

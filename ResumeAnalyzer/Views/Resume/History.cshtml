@@ -1,0 +1,170 @@
+@model ResumeAnalyzer.ViewModels.ResumeHistoryViewModel
+@{
+    ViewData["Title"] = "Resume History";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-header">
+    <div class="container-fluid px-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h4 class="fw-700 text-white mb-1"><i class="fas fa-history me-2"></i>Resume History</h4>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                        <li class="breadcrumb-item active">History</li>
+                    </ol>
+                </nav>
+            </div>
+            <a asp-controller="Resume" asp-action="Upload" class="btn btn-light px-4">
+                <i class="fas fa-plus me-2 text-primary"></i>Upload New
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid px-4 py-4">
+
+    <!-- Stats Bar -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-4">
+            <div class="stat-card stat-primary">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+                    <div>
+                        <div class="stat-value text-primary">@Model.TotalCount</div>
+                        <div class="stat-label">Total Resumes</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="stat-card stat-success">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon"><i class="fas fa-star"></i></div>
+                    <div>
+                        <div class="stat-value text-success">@Model.BestScore</div>
+                        <div class="stat-label">Best Score</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="stat-card stat-warning">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                    <div>
+                        <div class="stat-value text-warning">@Model.AverageScore.ToString("F0")</div>
+                        <div class="stat-label">Average Score</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!Model.Resumes.Any())
+    {
+        <div class="card">
+            <div class="card-body text-center py-6" style="padding:5rem 2rem;">
+                <div style="width:100px;height:100px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:2.5rem;color:var(--primary);">
+                    <i class="fas fa-folder-open"></i>
+                </div>
+                <h5 class="fw-600 mb-2">No resumes yet</h5>
+                <p class="text-muted mb-4">Upload your first resume to start tracking your progress.</p>
+                <a asp-controller="Resume" asp-action="Upload" class="btn btn-primary px-5">
+                    <i class="fas fa-upload me-2"></i>Upload Resume
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Grid of resume cards -->
+        <div class="row g-3" id="resumeGrid">
+            @foreach (var r in Model.Resumes)
+            {
+                var scoreClass = r.Score >= 70 ? "success" : r.Score >= 40 ? "warning" : "danger";
+                <div class="col-md-6 col-xl-4 resume-card-item">
+                    <div class="card card-hover h-100">
+                        <div class="card-body p-4">
+                            <!-- Header -->
+                            <div class="d-flex align-items-start justify-content-between mb-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div style="width:44px;height:44px;border-radius:10px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:1.1rem;flex-shrink:0;">
+                                        <i class="fas fa-file-@(r.FileName.EndsWith(".pdf") ? "pdf text-danger" : "word text-primary")"></i>
+                                    </div>
+                                    <div style="min-width:0;">
+                                        <div class="fw-600 text-truncate" style="max-width:160px;" title="@r.FileName">@r.FileName</div>
+                                        <div class="small text-muted">@r.UploadedAt.ToString("MMM dd, yyyy · hh:mm tt")</div>
+                                    </div>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-icon" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v text-muted"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" asp-action="Analysis" asp-route-id="@r.Id"><i class="fas fa-chart-bar me-2 text-primary"></i>View Analysis</a></li>
+                                        <li><a class="dropdown-item" asp-action="JobMatch" asp-route-resumeId="@r.Id"><i class="fas fa-briefcase me-2 text-warning"></i>Job Match</a></li>
+                                        <li><a class="dropdown-item" asp-action="InterviewQuestions" asp-route-id="@r.Id"><i class="fas fa-microphone me-2 text-secondary"></i>Interview Prep</a></li>
+                                        <li><a class="dropdown-item" asp-action="GenerateReport" asp-route-id="@r.Id"><i class="fas fa-file-pdf me-2 text-danger"></i>Download Report</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <form asp-action="Delete" asp-route-id="@r.Id" method="post" onsubmit="return confirm('Delete this resume?')">
+                                                <button type="submit" class="dropdown-item text-danger">
+                                                    <i class="fas fa-trash me-2"></i>Delete
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Score Bars -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="small text-muted">Resume Score</span>
+                                    <span class="small fw-600 text-@scoreClass">@r.Score / 100</span>
+                                </div>
+                                <div class="progress mb-2">
+                                    <div class="progress-bar bg-@scoreClass" data-width="@r.Score" style="width:0"></div>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="small text-muted">ATS Score</span>
+                                    <span class="small fw-600 text-info">@r.AtsScore / 100</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-info" data-width="@r.AtsScore" style="width:0"></div>
+                                </div>
+                            </div>
+
+                            <!-- Skills -->
+                            @if (r.Skills.Any())
+                            {
+                                <div class="d-flex flex-wrap gap-1 mb-3">
+                                    @foreach (var s in r.Skills.Take(4))
+                                    {
+                                        <span class="skill-badge" style="font-size:.72rem;padding:.2rem .55rem;">@s</span>
+                                    }
+                                    @if (r.Skills.Count > 4)
+                                    {
+                                        <span class="skill-badge" style="font-size:.72rem;padding:.2rem .55rem;">+@(r.Skills.Count - 4)</span>
+                                    }
+                                </div>
+                            }
+
+                            <!-- Actions -->
+                            <div class="d-flex gap-2">
+                                <a asp-action="Analysis" asp-route-id="@r.Id" class="btn btn-primary btn-sm flex-grow-1">
+                                    <i class="fas fa-chart-bar me-1"></i>Analysis
+                                </a>
+                                <a asp-action="JobMatch" asp-route-resumeId="@r.Id" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-briefcase"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
