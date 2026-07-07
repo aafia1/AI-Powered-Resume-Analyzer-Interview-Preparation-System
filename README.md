@@ -147,6 +147,15 @@ Open `https://localhost:5001` (or `http://localhost:5000`).
 
 ---
 
+
+## Screenshots of web:
+<img width="1366" height="658" alt="image" src="https://github.com/user-attachments/assets/ceaa86b8-9509-4ad2-82f4-f910d534b2ca" />
+<img width="1365" height="657" alt="image" src="https://github.com/user-attachments/assets/7212ba06-dd1b-43dc-b83d-8e0e1acb8ac3" />
+<img width="887" height="627" alt="image" src="https://github.com/user-attachments/assets/d5586289-9e69-4d01-b2f4-257efd51daf0" />
+<img width="1362" height="647" alt="image" src="https://github.com/user-attachments/assets/966096aa-5a00-40de-9c13-e6a92e0f6627" />
+
+---
+
 ## Deployment
 
 The app is a standard ASP.NET Core 8 MVC project and can be deployed anywhere .NET 8 + SQL Server are supported:
