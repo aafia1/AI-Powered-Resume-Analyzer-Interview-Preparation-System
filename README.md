@@ -103,7 +103,7 @@ Users ─┬─ Resumes ─┬─ ResumeSkills ─── Skills
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/ResumeAnalyzer.git
+git clone https://github.com/<aafia1>/ResumeAnalyzer.git
 cd ResumeAnalyzer
 ```
 
